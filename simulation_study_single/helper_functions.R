@@ -53,13 +53,20 @@ variogram_est <- function(fov_data) {
     fov_data$logit_prop[fov_data$prop == 0] <- log(0.01 / 0.99) 
     fov_data$logit_prop[fov_data$prop == 1] <- log(0.99 / 0.01) 
     coordinates(fov_data) = ~x+y
-    var_out <- variogram(logit_prop~1, fov_data, width = 2)
-    
+    var_out <- variogram(logit_prop~1, fov_data, width = 1)
     
     fit_model <- fit.variogram(var_out, model=vgm('Sph'))
     
-    c('sigma_spat' = sqrt(fit_model$psill[2]),
-      'zero_distance' = fit_model$range[2])
+    # sometimes variogram gives 0 for psill if it doesn't fit
+    if(fit_model$psill[2] == 0) {
+        c('sigma_spat' = 0.01,
+          'zero_distance' = fit_model$range[2])
+    } else {
+        c('sigma_spat' = sqrt(fit_model$psill[2]),
+          'zero_distance' = fit_model$range[2])
+    }
+    
+    
     
 } 
 

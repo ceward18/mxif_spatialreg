@@ -68,7 +68,7 @@ for (i in batch_idx) {
     ### simulate data
     
     # intercept specifies proportion when marker absent
-    beta0 <- logit(0.05)
+    beta0 <- logit(0.1)
     
     # rho depends on zero_distance
     rho <- optim(0, function(x) (exp(-zero_distance^2 / (2 * x^2)) - 0.001)^2, 
