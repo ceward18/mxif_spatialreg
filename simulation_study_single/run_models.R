@@ -46,7 +46,7 @@ rownames(all_sims) <- NULL
 
 
 # do batches
-batch_size <- 500
+batch_size <- 300
 batch_idx <- batch_size * (idx - 1) + 1:batch_size
 
 for (i in batch_idx) {
