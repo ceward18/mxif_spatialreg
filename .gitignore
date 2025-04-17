@@ -1,3 +1,5 @@
+/simulation_study/results/*
+
 # History files
 .Rhistory
 .Rapp.history
