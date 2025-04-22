@@ -11705,3 +11705,50 @@ Sampled: 10000 of 20000, 50.00%
 Report interval Metrop. Acceptance rate: 62.48%
 Overall Metrop. Acceptance rate: 61.87%
 -------------------------------------------------
+Sampled: 15000 of 20000, 75.00%
+Report interval Metrop. Acceptance rate: 61.66%
+Overall Metrop. Acceptance rate: 61.80%
+-------------------------------------------------
+Sampled: 20000 of 20000, 100.00%
+Report interval Metrop. Acceptance rate: 62.38%
+Overall Metrop. Acceptance rate: 61.95%
+-------------------------------------------------
+[1] "zero distance: 100, sigma^2: 0.5, beta: -0.41, simulation: 214"
+[1] "no_corr"
+[1] "pc_exp"
+[1] "pc_exp_raw_1"
+[1] "pc_exp_raw_sigma"
+[1] "pc_exp_norm_1"
+[1] "pc_exp_norm_sigma"
+[1] "pc_sqexp"
+[1] "pc_sqexp_raw_1"
+[1] "pc_sqexp_raw_sigma"
+[1] "pc_sqexp_norm_1"
+[1] "pc_sqexp_norm_sigma"
+[1] "nngp"
+----------------------------------------
+	Building the neighbor list
+----------------------------------------
+----------------------------------------
+	Model description
+----------------------------------------
+NNGP Response model fit with 1589 observations.
+
+Number of covariates 2 (including intercept if specified).
+
+Using the gaussian spatial correlation model.
+
+Using 10 nearest neighbors.
+
+Number of MCMC samples 20000.
+
+Priors and hyperpriors:
+	beta flat.
+	sigma.sq IG hyperpriors shape=2.00000 and scale=0.01000
+	tau.sq IG hyperpriors shape=2.00000 and scale=0.01000
+	phi Unif hyperpriors a=0.01314 and b=0.52565
+
+Source compiled with OpenMP support and model fit using 10 thread(s).
+----------------------------------------
+		Sampling
+----------------------------------------

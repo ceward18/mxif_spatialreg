@@ -13100,3 +13100,38 @@ Overall Metrop. Acceptance rate: 79.46%
 [1] "pc_sqexp_raw_sigma"
 [1] "pc_sqexp_norm_1"
 [1] "pc_sqexp_norm_sigma"
+[1] "nngp"
+----------------------------------------
+	Building the neighbor list
+----------------------------------------
+----------------------------------------
+	Model description
+----------------------------------------
+NNGP Response model fit with 1063 observations.
+
+Number of covariates 2 (including intercept if specified).
+
+Using the gaussian spatial correlation model.
+
+Using 10 nearest neighbors.
+
+Number of MCMC samples 20000.
+
+Priors and hyperpriors:
+	beta flat.
+	sigma.sq IG hyperpriors shape=2.00000 and scale=0.49160
+	tau.sq IG hyperpriors shape=2.00000 and scale=0.01000
+	phi Unif hyperpriors a=0.01314 and b=0.52565
+
+Source compiled with OpenMP support and model fit using 10 thread(s).
+----------------------------------------
+		Sampling
+----------------------------------------
+Sampled: 5000 of 20000, 25.00%
+Report interval Metrop. Acceptance rate: 72.94%
+Overall Metrop. Acceptance rate: 72.94%
+-------------------------------------------------
+Sampled: 10000 of 20000, 50.00%
+Report interval Metrop. Acceptance rate: 81.46%
+Overall Metrop. Acceptance rate: 77.20%
+-------------------------------------------------

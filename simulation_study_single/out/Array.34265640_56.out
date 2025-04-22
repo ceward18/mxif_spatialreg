@@ -13351,3 +13351,11 @@ Sampled: 5000 of 20000, 25.00%
 Report interval Metrop. Acceptance rate: 62.40%
 Overall Metrop. Acceptance rate: 62.40%
 -------------------------------------------------
+Sampled: 10000 of 20000, 50.00%
+Report interval Metrop. Acceptance rate: 63.14%
+Overall Metrop. Acceptance rate: 62.77%
+-------------------------------------------------
+Sampled: 15000 of 20000, 75.00%
+Report interval Metrop. Acceptance rate: 61.86%
+Overall Metrop. Acceptance rate: 62.47%
+-------------------------------------------------
