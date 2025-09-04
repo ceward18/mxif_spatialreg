@@ -86,7 +86,7 @@ fit_model <- function(model_type, sim_data, model_info, beta0, beta_val) {
                                        
                                        # weight eigenvectors by proportion of variance explained
                                        offset <- colSums(t(eigens$vectors) * (eigens$values / sum(eigens$values)))
-                                       # normalize?
+                                       # standardize?
                                        norm_offset <- (offset - mean(offset)) / sd(offset)
                                        
                                        # multiply by sigma estimate individually

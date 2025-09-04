@@ -53,6 +53,11 @@ sim_data_fn <- function(betas, nSub, nImagePerSub,
     b_dat <- cbind.data.frame(subjectID = 1:nSub,
                               b = rnorm(nSub, sd = sigma_sub))
     
+    # if only one image per subject, then don't need subject random effect
+    if (nImagePerSub == 1) {
+        b_dat$b <- 0
+    }
+    
     # image specific random effect
     c_dat <- cbind.data.frame(subjectID = rep(1:nSub, each = nImagePerSub),
                               imageID = 1:(nImagePerSub * nSub),
@@ -105,7 +110,7 @@ sim_data_fn <- function(betas, nSub, nImagePerSub,
                           ilogit(betas[1] + betas[2] * response + b + c + e))
     
     # distribution of number of neighbors
-    tumorDat$numNeighbors <- rpois(nrow(tumorDat), 5)
+    tumorDat$numNeighbors <- rnbinom(nrow(tumorDat), mu = 17, size = 15)
     
     # get outcome from binomial draw
     tumorDat$outcome <- rbinom(nrow(tumorDat), 

@@ -1,4 +1,6 @@
 /simulation_study/results/*
+/simulation_study_single/results/*
+/data_analysis/*
 
 # History files
 .Rhistory
