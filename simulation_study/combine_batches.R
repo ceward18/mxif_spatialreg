@@ -7,6 +7,10 @@ resultsFolder <- 'results'
 
 outputFiles <- sort(list.files(paste0('./', outputFolder)))
 
+# which are missing?
+all_files <- paste0('res_batch_', sprintf("%03d",1:990), '.rds')
+all_files[!all_files %in% outputFiles]
+
 # Three batches 
 # for each batch convert to summary stats then combine all summary stats
 
