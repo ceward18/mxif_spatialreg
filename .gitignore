@@ -3,6 +3,8 @@
 /data_analysis/*
 
 *.docx
+*.png
+*.tmp
 
 # History files
 .Rhistory
