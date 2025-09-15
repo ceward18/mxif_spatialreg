@@ -57,9 +57,10 @@ for (i in 2:length(outputFiles3)) {
 
 saveRDS(res_all, paste0('./', resultsFolder, '/res_all_3.rds'))
 
+
+################################################################################
 ### combine all three and summarize
 
-library(dplyr)
 
 res_all_1 <- readRDS(paste0('./', resultsFolder, '/res_all_1.rds'))
 res_all_2 <- readRDS(paste0('./', resultsFolder, '/res_all_2.rds'))
@@ -67,9 +68,13 @@ res_all_3 <- readRDS(paste0('./', resultsFolder, '/res_all_3.rds'))
 
 res_all <- rbind.data.frame(res_all_1, res_all_2, res_all_3)
 
+
+library(dplyr)
+
 # MSE, absolute difference, coverage probability, avg time
 prop_stats <- res_all %>%
-    group_by(n_subjects, n_image_sub, zero_distance, sigma_spat, coef, model_type, beta_idx) %>%
+    group_by(n_subjects, n_image_sub, zero_distance, sigma_spat, 
+             coef, model_type, beta_idx) %>%
     summarise(nsims = length(sim_number),
               mse = mean((est - truth)^2),
               mse_rel = mean((est/truth - truth/truth)^2),

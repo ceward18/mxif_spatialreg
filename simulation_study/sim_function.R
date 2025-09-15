@@ -58,10 +58,30 @@ sim_data_fn <- function(betas, nSub, nImagePerSub,
         b_dat$b <- 0
     }
     
+    # half responders, half non-responders
+    nResponder <- ceiling(nSub/2)
+    b_dat$response <- c(rep(1, nResponder),
+                        rep(0, nSub - nResponder))
+    
     # image specific random effect
+    n_unique_images <- nImagePerSub * nSub
     c_dat <- cbind.data.frame(subjectID = rep(1:nSub, each = nImagePerSub),
-                              imageID = 1:(nImagePerSub * nSub),
-                              c = rnorm(nImagePerSub * nSub, sd = sigma_image))
+                              imageID = 1:n_unique_images,
+                              c = rnorm(n_unique_images, sd = sigma_image))
+    # half core, half interface FOVs, random assignment BUT need to ensure not 
+    #  all responders/non-responders
+    nCore <- ceiling(n_unique_images/2)
+    repeat {
+        c_dat$fov_type <- 0
+        c_dat$fov_type[sample(1:n_unique_images, nCore)] <- 1
+        
+        bc_comb <- merge(c_dat, b_dat, by = 'subjectID', all.x = T)
+        
+        # check if all core images are responders
+        if (sum(bc_comb$fov_type[bc_comb$response == 1]) != nCore) break
+        
+    }
+    
     
     ### loop over images and generate data
     
@@ -87,8 +107,7 @@ sim_data_fn <- function(betas, nSub, nImagePerSub,
                 
             }
             
-            imageDat <- merge(imageDat, b_dat, by = 'subjectID', all.x = T)
-            imageDat <- merge(imageDat, c_dat, by = c('subjectID', 'imageID'), all.x = T)
+            imageDat <- merge(imageDat, bc_comb, by = c('subjectID', 'imageID'), all.x = T)
             
             # store data
             imageList[[(i-1)*nImagePerSub + j]] <- imageDat
@@ -97,17 +116,13 @@ sim_data_fn <- function(betas, nSub, nImagePerSub,
     
     tumorDat <- do.call("rbind.data.frame", imageList)
     
-    # half responder vs non responder
-    nResponder <- ceiling(nSub/2)
-    responderStatus <- data.frame(subjectID = 1:nSub,
-                                  response = c(rep(1, nResponder),
-                                               rep(0, nSub - nResponder)))
-    tumorDat <- merge(tumorDat, responderStatus, by = 'subjectID', all.x = T)
-    
     
     # probabilities 
     tumorDat$prob <- with(tumorDat, 
-                          ilogit(betas[1] + betas[2] * response + b + c + e))
+                          ilogit(betas[1] +
+                                     betas[2] * response + 
+                                     betas[3] * fov_type  +
+                                     b + c + e))
     
     # distribution of number of neighbors
     tumorDat$numNeighbors <- rnbinom(nrow(tumorDat), mu = 17, size = 15)
@@ -121,6 +136,6 @@ sim_data_fn <- function(betas, nSub, nImagePerSub,
     # select columns to output
     tumorDat[order(tumorDat$subjectID, tumorDat$imageID),
              c('subjectID', 'imageID', 'tumorID',
-               'x', 'y', 'response', 'numNeighbors', 'outcome')]
+               'x', 'y', 'response', 'fov_type', 'numNeighbors', 'outcome')]
     
 }

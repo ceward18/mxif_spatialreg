@@ -61,77 +61,29 @@ variogram_est <- function(fov_data) {
     
     fit_model <- fit.variogram(var_out, model=vgm('Sph'))
     
-    c('sigma_spat' = sqrt(fit_model$psill[2]),
+    c('sigma_spat' = fit_model$psill[2],
       'zero_distance' = fit_model$range[2])
     
 } 
 
-get_confint <- function(spfit) {
-    
-    betaCovMat <- vcov(spfit)
-    betaHat <- spfit$fixef
-    
-    # response
-    LVec <- c(0,1)
-    seLogitScale <- as.vector(sqrt(t(LVec) %*% betaCovMat %*% LVec))
-    ci2 <- c(LVec %*% betaHat)  + c(-1.96, 1.96) * seLogitScale
-    
-    matrix(exp(ci2), nrow = 1, byrow = T)
-    
-}
-
-
-get_confint_1 <- function(spfit) {
-    
-    betaCovMat <- vcov(spfit)
-    betaHat <- spfit$fixef
-    
-    # estimated proportion
-    
-    LVec <- 1
-    seLogitScale <- as.vector(sqrt(t(LVec) %*% betaCovMat %*% LVec))
-    ci <- c(LVec %*% betaHat)  + c(-1.96, 1.96) * seLogitScale
-    
-    matrix(exp(ci), nrow = 1, byrow = T)
-    
-    
-}
-
 get_summary_table <- function(spfit, sim_data, 
-                              beta0, beta_val,
+                              beta_val, beta2, 
                               sigma_spat_use, model_type, model_info,
                               model_fit_time, eigen_decomp_time) {
     
     
     start <- Sys.time()
     
-    ci <- get_confint(spfit)
+    ci <- confint(spfit)
     
     # exponentiate to OR scale
-    # also want probabilities of outcome for responder and non-responders
-    prob_dat <- data.frame(response = c(0, 1))
-    if (grepl('pc_', model_type)) {
-        prob_dat$spatial_offset = mean(unique(sim_data$spatial_offset))
-    }
     
-    prob_dat <- cbind.data.frame(prob_dat,
-                                 est = predict(spfit, 
-                                               newdata = prob_dat, 
-                                               re.form = NA,
-                                               type = 'response'))
-    # compute variance on scale of linear predictor (not on probability scale!)
-    prob_dat$var <- get_fixefVar(spfit,
-                                 newdata=prob_dat, 
-                                 re.form = NA)
-    prob_dat$lower <- ilogit(logit(prob_dat$est) - 1.96 * sqrt(prob_dat$var))
-    prob_dat$upper <- ilogit(logit(prob_dat$est) + 1.96 * sqrt(prob_dat$var))
-    
-    sum_tab <- data.frame(coef = c('OR', 'p_0', 'p_1'),
-                          est = c(exp(spfit$fixef)[2], prob_dat$est),
-                          se = c(sqrt(diag(vcov(spfit)))[2], sqrt(prob_dat$var)),
-                          lower = c(ci[1,1], prob_dat$lower),
-                          upper = c(ci[1,2], prob_dat$upper),
-                          truth = c(exp(beta_val), ilogit(c(beta0, beta0 + beta_val))),
+    sum_tab <- data.frame(coef = c('OR_R', 'OR_FOV'),
+                          est = exp(ci[2:3,3]),
+                          se = sqrt(diag(vcov(spfit)$cond)[2:3]),
+                          lower = exp(ci[2:3,1]),
+                          upper = exp(ci[2:3,2]),
+                          truth = c(exp(beta_val), beta2),
                           model_info,
                           model_type = model_type)
     
