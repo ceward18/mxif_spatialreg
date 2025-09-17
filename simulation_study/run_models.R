@@ -14,7 +14,6 @@ library(spatstat.random)
 library(mvnfast)
 library(Matrix)
 library(glmmTMB)
-library(emmeans)
 library(doSNOW)
 
 source('helper_functions.R')
