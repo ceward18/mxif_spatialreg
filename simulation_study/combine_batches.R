@@ -7,15 +7,15 @@ resultsFolder <- 'results'
 
 outputFiles <- sort(list.files(paste0('./', outputFolder)))
 
-# which are missing?
-all_files <- paste0('res_batch_', sprintf("%03d",1:990), '.rds')
+# any missing?
+all_files <- paste0('res_batch_', sprintf("%04d",1:1620), '.rds')
 all_files[!all_files %in% outputFiles]
 
 # Three batches 
 # for each batch convert to summary stats then combine all summary stats
 
 
-outputFiles1 <- outputFiles[1:330]
+outputFiles1 <- outputFiles[1:540]
 
 res_all <- readRDS(paste0('./', outputFolder, '/', outputFiles1[1]))
 
@@ -29,7 +29,7 @@ saveRDS(res_all, paste0('./', resultsFolder, '/res_all_1.rds'))
 
 
 # second batch
-outputFiles2 <- outputFiles[331:660]
+outputFiles2 <- outputFiles[541:1080]
 
 res_all <- readRDS(paste0('./', outputFolder, '/', outputFiles2[1]))
 
@@ -45,7 +45,7 @@ saveRDS(res_all, paste0('./', resultsFolder, '/res_all_2.rds'))
 
 
 # third batch
-outputFiles3 <- outputFiles[661:length(outputFiles)]
+outputFiles3 <- outputFiles[1081:length(outputFiles)]
 
 res_all <- readRDS(paste0('./', outputFolder, '/', outputFiles3[1]))
 
@@ -61,12 +61,16 @@ saveRDS(res_all, paste0('./', resultsFolder, '/res_all_3.rds'))
 ################################################################################
 ### combine all three and summarize
 
+resultsFolder <- 'results'
 
 res_all_1 <- readRDS(paste0('./', resultsFolder, '/res_all_1.rds'))
 res_all_2 <- readRDS(paste0('./', resultsFolder, '/res_all_2.rds'))
 res_all_3 <- readRDS(paste0('./', resultsFolder, '/res_all_3.rds'))
 
 res_all <- rbind.data.frame(res_all_1, res_all_2, res_all_3)
+
+# forgot to exponentiate true value
+res_all$truth[res_all$coef == 'OR_FOV'] <- exp(res_all$truth[res_all$coef == 'OR_FOV'])
 
 
 library(dplyr)
@@ -82,7 +86,8 @@ prop_stats <- res_all %>%
               bias_rel = mean((est - truth)/truth),
               abs_diff = mean(abs(est - truth)),
               abs_diff_rel = mean(abs(est/truth - truth/truth)),
-              cover = mean(truth > lower & truth < upper),
+              cover = mean(truth > lower & truth < upper, na.rm = T),
+              power = mean((lower > 1) | (upper < 1), na.rm = T), 
               time = mean(time),
               truth = mean(truth)) %>%
     data.frame()
@@ -91,14 +96,18 @@ prop_stats <- res_all %>%
 saveRDS(prop_stats, paste0('./', resultsFolder, '/prop_stats.rds'))
 
 
-time_tab <- subset(res_all, coef == 'OR' & 
+
+time_tab <- subset(res_all, coef == 'OR_R' & 
                        model_type %in% c('no_corr', 
-                                         'pc_sqexp_norm_overall_sigma')) %>%
+                                         'pc_sqexp')) %>%
     group_by(model_type, n_subjects, n_image_sub) %>%
     summarise(avg_time = mean(time),
               median_time = median(time),
               lower_time = quantile(time, 0.25),
-              upper_time = quantile(time, 0.75)) %>%
+              upper_time = quantile(time, 0.75),
+              median_eigen_time = median(eigen_decomp_time),
+              median_model_time = median(model_fit_time),
+              median_summary_time = median(summary_time)) %>%
     data.frame()
 
 saveRDS(time_tab, paste0('./', resultsFolder, '/time_tab.rds'))
@@ -106,7 +115,7 @@ saveRDS(time_tab, paste0('./', resultsFolder, '/time_tab.rds'))
 
 
 # median number of tumor cells by n_subjects and n_images
-ncells_summary <- subset(res_all, coef == 'OR' & 
+ncells_summary <- subset(res_all, coef == 'OR_R' & 
            model_type %in% c('no_corr')) %>%
     group_by(n_subjects, n_image_sub) %>%
     summarise(mean_cells = mean(n_cells),

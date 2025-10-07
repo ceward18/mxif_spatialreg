@@ -45,12 +45,12 @@ rho_100 <- optim(0, function(x) (exp(-100^2 / (2 * x^2)) - 0.001)^2,
 
 set.seed(100)
 sim_data <- sim_data_fn(betas = c( logit(0.05), 1.2), 
-                         nSub = 4, 
-                         nImagePerSub = 1, 
-                         rho = rho_100,
-                         sigma_spat = 2,    # spatial SD
-                         sigma_sub = 0.4,            # between subjects SD
-                         sigma_image = 0.4)          # between images SD
+                        nSub = 4, 
+                        nImagePerSub = 1, 
+                        rho = rho_100,
+                        sigma_spat = 2,    # spatial SD
+                        sigma_sub = 0.4,            # between subjects SD
+                        sigma_image = 0.4)          # between images SD
 
 # do eigen-decomposition
 
@@ -101,7 +101,7 @@ spatial_offsets <- foreach(j = 1:length(unique_images),
                                offset <- colSums(t(eigens$vectors) * (eigens$values / sum(eigens$values)))
                                # standardize
                                (offset - mean(offset)) / sd(offset)
-                              
+                               
                            }
 
 parallel::stopCluster(cl = my_cluster)
@@ -214,10 +214,10 @@ dev.off()
 # Figure 2 - bias and coverage of 95% CI
 
 # prop outcome, beta1 corresponds to OR
-ors <- c(1, 1.1, 1.25, 1.5, 2, 3)
+ors <- c(1, 1.25, 1.5, 2, 3)
 ors <- c(rev(1/ors[-1]), ors)
 
-beta_vals <- data.frame(beta_idx = 1:11,
+beta_vals <- data.frame(beta_idx = 1:length(ors),
                         beta_val = log(ors))
 
 
@@ -230,9 +230,9 @@ prop_stats <- merge(prop_stats, beta_vals,
                     by = 'beta_idx', all.x = T)
 
 
-or_stats <- subset(prop_stats, coef == 'OR' & 
-                       model_type %in% c('no_corr', 
-                                         'pc_sqexp_norm_overall_sigma'))
+or_stats <- subset(prop_stats, 
+                   model_type %in% c('no_corr', 
+                                     'pc_sqexp'))
 
 
 or_stats$model_type <- factor(or_stats$model_type,
@@ -251,7 +251,8 @@ zero_distance_plot <- 100
 
 
 # no corr vs estimation by sigma-spat, nsubject = 30, nimages = 1, zero_distance = 50
-p1 <- ggplot(subset(or_stats, n_subjects == n_subjects_plot & 
+p1 <- ggplot(subset(or_stats, coef == 'OR_R' & 
+                        n_subjects == n_subjects_plot & 
                         n_image_sub == n_image_sub_plot & 
                         zero_distance == zero_distance_plot), 
              aes(x = exp(beta_val), y = bias,  col = model_type)) +
@@ -267,7 +268,8 @@ p1 <- ggplot(subset(or_stats, n_subjects == n_subjects_plot &
 
 
 # no corr vs estimation by sigma-spat, nsubject = 30, nimages = 1, zero_distance = 50
-p2 <- ggplot(subset(or_stats, n_subjects == n_subjects_plot & 
+p2 <- ggplot(subset(or_stats, coef == 'OR_R' & 
+                        n_subjects == n_subjects_plot & 
                         n_image_sub == n_image_sub_plot & 
                         zero_distance == zero_distance_plot), 
              aes(x = exp(beta_val), y = cover,  col = model_type)) +
@@ -294,21 +296,29 @@ or_stats$n_image_sub <- factor(or_stats$n_image_sub,
 or_stats <- or_stats[order(or_stats$beta_idx, or_stats$n_subjects, or_stats$zero_distance,
                            or_stats$sigma_spat, or_stats$model_type, or_stats$n_image_sub),]
 
-png('figures/mse_datasize.png', units = 'in', res = 500, height =4, width = 12)
-ggplot(subset(or_stats, zero_distance == 100 &
+or_stats$coef <- factor(or_stats$coef,
+                        levels = c("OR_R", 'OR_FOV'),
+                        labels = c('Subject-level predictor', 'Image-level predictor'))
+
+
+
+png('figures/power_datasize.png', units = 'in', res = 500, height =6, width = 12)
+ggplot(subset(or_stats, 
+              beta_idx > 5 & 
+                  zero_distance == 100 &
                   model_type %in% c('Eigen-decomposition')), 
-       aes(x = exp(beta_val), y = mse_rel, col = n_image_sub,  linetype = n_subjects)) +
+       aes(x = exp(beta_val), y = power, col = n_image_sub,  linetype = n_subjects)) +
     # geom_point(size = 2) +
     geom_line(linewidth = 1) +
-    facet_nested(  ~ sigma_spat_fac) +
-    labs(x = 'Odds ratio for responders vs non-responders',
-         y = 'MSE relative to true OR',
+    facet_nested(coef  ~ sigma_spat_fac) +
+    labs(x = 'Odds ratio for subject-level predictor',
+         y = 'Power',
          linetype = 'Number of subjects',
          col = '') +
-    ylim(0, 0.16) +
+    ylim(0, 1) +
     theme(legend.key.width = unit(2,"cm")) + 
-    scale_color_manual(values = c(rgb(255, 204, 51, max = 255),
-                                  rgb(122, 0, 25, max = 255)))
+    scale_color_manual(values = c('#1B9E77',
+                                  "#D95F02"))
 dev.off()
 
 ################################################################################
@@ -326,7 +336,8 @@ time_tab$median_IQR <- paste0(sprintf("%.2f", round(time_tab$median_time, 2)),
                               ')')
 
 
-time_tab <- time_tab[,c('n_subjects', 'n_image_sub', 'model_type', 'median_IQR')]
+time_tab <- time_tab[,c('n_subjects', 'n_image_sub',
+                        'model_type', 'median_IQR')]
 
 time_tab_wide <- pivot_wider(time_tab,
                              id_cols = c(n_subjects, n_image_sub),
@@ -335,14 +346,16 @@ time_tab_wide <- pivot_wider(time_tab,
     data.frame()
 time_tab_wide$median_cells <- ncells_summary$median_cells
 time_tab_wide <- time_tab_wide[,c('n_subjects', 'n_image_sub', 'median_cells',
-                                  'no_corr', 'pc_sqexp_norm_overall_sigma')]
+                                  'no_corr', 'pc_sqexp')]
 
 colnames(time_tab_wide)[4:5] <- c('No spatial correlation',
                                   'Eigen-decomposition')
 
 time_tab_wide$median_cells <- scales::comma(time_tab_wide$median_cells)
 
-kable(time_tab_wide, format = 'latex', booktabs = T) %>%
+time_tab_wide
+
+kable(time_tab_wide) %>%
     collapse_rows(columns = 1, valign = "middle")
 
-    
+

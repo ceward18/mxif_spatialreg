@@ -1,5 +1,6 @@
-/simulation_study/results/*
-/simulation_study_single/results/*
+/simulation_study/results/res_all*
+/simulation_study/results/pop_stats2*
+/simulation_study_single/*
 /data_analysis/*
 
 *.docx

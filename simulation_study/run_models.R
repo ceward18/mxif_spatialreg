@@ -75,7 +75,7 @@ for (i in batch_idx) {
     
     ### simulate data
     
-    # intercept specifies proportion for non-responders
+    # intercept specifies proportion for non-responders in the core
     beta0 <- logit(0.05)
     
     # beta2 is difference between core and interface, fixed at OR 1.5
