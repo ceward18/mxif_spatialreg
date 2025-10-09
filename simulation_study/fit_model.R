@@ -23,7 +23,7 @@ fit_model <- function(model_type, sim_data, model_info, beta_val, beta2) {
         
         model_fit_time <-  as.numeric(end_model - start_model, units = 'secs')
         
-        get_summary_table(spfit, sim_data, beta_val, beta2,
+        get_summary_table(spfit, beta_val, beta2,
                           sigma_spat_use, model_type,
                           model_info,
                           model_fit_time, 
@@ -122,7 +122,7 @@ fit_model <- function(model_type, sim_data, model_info, beta_val, beta2) {
         model_fit_time <- as.numeric(end_model - start_model, units = 'secs')
         
         
-        get_summary_table(spfit, sub_dat, beta_val, beta2,
+        get_summary_table(spfit, beta_val, beta2,
                           sigma_spat_use, model_type = model_type,
                           model_info,
                           model_fit_time, eigen_decomp_time)

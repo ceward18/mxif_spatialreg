@@ -66,7 +66,7 @@ variogram_est <- function(fov_data) {
     
 } 
 
-get_summary_table <- function(spfit, sim_data, 
+get_summary_table <- function(spfit,  
                               beta_val, beta2, 
                               sigma_spat_use, model_type, model_info,
                               model_fit_time, eigen_decomp_time) {
@@ -83,7 +83,7 @@ get_summary_table <- function(spfit, sim_data,
                           se = sqrt(diag(vcov(spfit)$cond)[2:3]),
                           lower = exp(ci[2:3,1]),
                           upper = exp(ci[2:3,2]),
-                          truth = c(exp(beta_val), beta2),
+                          truth = c(exp(beta_val), exp(beta2)),
                           model_info,
                           model_type = model_type)
     
@@ -106,5 +106,42 @@ get_summary_table <- function(spfit, sim_data,
     
     
     sum_tab
+}
+
+get_summary_table_inla <- function(res, beta_val, beta2, sigma_spat_use, 
+                                   model_info, model_fit_time) {
+    
+    start <- Sys.time()
+    
+    # OR responder 
+    marg_beta <- res$marginals.fixed$"response"
+    marg_or <- inla.tmarginal(function(x) exp(x), marg_beta)
+    or_r_sum <- inla.zmarginal(marg_or, silent = TRUE)
+    
+    # OR fov_type
+    marg_beta <- res$marginals.fixed$"fov_type"
+    marg_or <- inla.tmarginal(function(x) exp(x), marg_beta)
+    or_fov_sum <- inla.zmarginal(marg_or, silent = TRUE)
+    
+    sum_tab <- data.frame(coef = c('OR_R', 'OR_FOV'),
+                          est = c(or_r_sum$mean, or_fov_sum$mean),
+                          se = res$summary.fixed$sd[-1],
+                          lower = c(or_r_sum$quant0.025, or_fov_sum$quant0.025),
+                          upper = c(or_r_sum$quant0.975, or_fov_sum$quant0.975),
+                          truth = c(exp(beta_val), exp(beta2)),
+                          model_info,
+                          model_type = 'inla')
+    
+    end <- Sys.time()
+    
+    summary_time <- as.numeric(end - start, units = 'secs')
+    
+    sum_tab$sigma_spat_est <- res$summary.hyperpar$mean['Stdev for i',]
+    sum_tab$eigen_decomp_time <- 0
+    sum_tab$model_fit_time <- model_fit_time 
+    sum_tab$summary_time <- summary_time
+    sum_tab$time <- sum_tab$eigen_decomp_time + model_fit_time + summary_time
+    sum_tab
+    
 }
 

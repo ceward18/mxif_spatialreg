@@ -288,7 +288,7 @@ grid.arrange(p1, p2, nrow = 2)
 dev.off()
 
 ################################################################################
-# Figure 3 - MSE by dataset size
+# Figure 3 - power by dataset size
 
 or_stats$n_image_sub <- factor(or_stats$n_image_sub, 
                                labels = c('1 image per subject',
@@ -298,28 +298,49 @@ or_stats <- or_stats[order(or_stats$beta_idx, or_stats$n_subjects, or_stats$zero
 
 or_stats$coef <- factor(or_stats$coef,
                         levels = c("OR_R", 'OR_FOV'),
-                        labels = c('Subject-level predictor', 'Image-level predictor'))
+                        labels = c('Subject-level predictor',
+                                   'Image-level predictor'))
+or_stats$n_subjects <- as.numeric(as.character(or_stats$n_subjects))
 
-
-
-png('figures/power_datasize.png', units = 'in', res = 500, height =6, width = 12)
+png('figures/power_datasize.png', units = 'in', res = 500, height =3.5, width = 9)
 ggplot(subset(or_stats, 
-              beta_idx > 5 & 
+              beta_idx == 7  & 
                   zero_distance == 100 &
+                  sigma_spat_fac == 'High spatial correlation' &
                   model_type %in% c('Eigen-decomposition')), 
-       aes(x = exp(beta_val), y = power, col = n_image_sub,  linetype = n_subjects)) +
-    # geom_point(size = 2) +
-    geom_line(linewidth = 1) +
-    facet_nested(coef  ~ sigma_spat_fac) +
-    labs(x = 'Odds ratio for subject-level predictor',
+       aes(x = n_subjects, y = power, col = n_image_sub)) +
+    geom_hline(yintercept = 0.8, linetype = 2) +
+    geom_line(linewidth = 1.5) +
+    facet_nested(  ~ coef) +
+    labs(x = 'Number of subjects',
          y = 'Power',
-         linetype = 'Number of subjects',
          col = '') +
     ylim(0, 1) +
     theme(legend.key.width = unit(2,"cm")) + 
     scale_color_manual(values = c('#1B9E77',
-                                  "#D95F02"))
+                                  "#D95F02"),
+                       guide = guide_legend(reverse = TRUE) ) 
 dev.off()
+
+
+# png('figures/power_datasize.png', units = 'in', res = 500, height =6, width = 12)
+# ggplot(subset(or_stats, 
+#               beta_idx > 5 & 
+#                   zero_distance == 100 &
+#                   model_type %in% c('Eigen-decomposition')), 
+#        aes(x = exp(beta_val), y = power, col = n_image_sub,  linetype = n_subjects)) +
+#     # geom_point(size = 2) +
+#     geom_line(linewidth = 1) +
+#     facet_nested(coef  ~ sigma_spat_fac) +
+#     labs(x = 'Odds ratio for subject-level predictor',
+#          y = 'Power',
+#          linetype = 'Number of subjects',
+#          col = '') +
+#     ylim(0, 1) +
+#     theme(legend.key.width = unit(2,"cm")) + 
+#     scale_color_manual(values = c('#1B9E77',
+#                                   "#D95F02"))
+# dev.off()
 
 ################################################################################
 # Table 1 - MSE by dataset size
