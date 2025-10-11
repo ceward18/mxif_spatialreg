@@ -1,6 +1,7 @@
 #!/bin/bash
 ####### Reserve computing resources #############
 #SBATCH --job-name=PC_sim_inla2
+#SBATCH -p msibigmem
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=20
