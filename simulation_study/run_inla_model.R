@@ -35,22 +35,34 @@ all_sims <- expand.grid(n_subjects = c(10, 30, 50),
 
 all_sims <- merge(all_sims, beta_vals, by = 'beta_idx', all.x = T)
 
-all_sims <- all_sims[order(all_sims$n_subjects,
-                           all_sims$n_image_sub,
+all_sims <- all_sims[order(all_sims$n_image_sub,
+                           all_sims$n_subjects,
                            all_sims$beta_idx,
                            all_sims$sim_number),]
 rownames(all_sims) <- NULL
 
 
 # do batches
-batch_size <- 5
-tmp <- all_sims[seq(1, nrow(all_sims), batch_size),]
-rownames(tmp) <- NULL
+# batch 1-12 get 1:1620 (all nimages = 1)
+# batches 1621:2160 is 10/5 ~ 10 min
+# batches 2161:2700 is 30/5 ~ 20 min (need high memory)
+# batches 2701:3240 is 50/5 ~ 40 min (need high memory)
 
-batch_idx <- batch_size * (idx - 1) + 1:batch_size
+if (idx <= 12) {
+    batch_size <- 135
+    batch_idx <- batch_size * (idx - 1) + 1:batch_size
+} else if (idx <= 17){ # idx 13-17, 5 batches of 108
+    batch_size <- 108
+    batch_idx <- (135 * 12) + 108 * (idx - 13) + 1:batch_size
+} else if (idx <= 27){ # idx 18-27, 10 batches of 54
+    batch_size <- 54
+    batch_idx <- (135 * 12) + (108 * 5) + 54 * (idx - 18) + 1:batch_size
+} else {               # idx 28-47, 20 batches of 27
+    batch_size <- 27
+    batch_idx <- (135 * 12) + (108 * 5) + (54 * 10) + 27 * (idx - 28) + 1:batch_size
+}
 
-
-for (i in nrow(all_sims)) {
+for (i in batch_idx) {
     
     # get specifications
     n_subjects <- all_sims$n_subjects[i]
@@ -99,7 +111,7 @@ for (i in nrow(all_sims)) {
     
     
     # fit model and extract estimates + 95% CIs
-    # 10, 1 = 41
+    # 10, 1 = 41 sec
     # 10, 5 = 377 sec (6 min)
     # 30, 1 = 149 sec (2 min)
     # 30, 5 = 1084 sec (18 min)
@@ -123,6 +135,6 @@ for (i in nrow(all_sims)) {
 }
 
 # save output in RDS form
-saveRDS(all_batches, paste0('./output/res_inla_batch_', sprintf("%03d",idx), '.rds'))
+saveRDS(all_batches, paste0('./output/res_inla_batch_', sprintf("%02d",idx), '.rds'))
 
 
