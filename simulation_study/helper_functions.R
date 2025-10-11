@@ -108,8 +108,7 @@ get_summary_table <- function(spfit,
     sum_tab
 }
 
-get_summary_table_inla <- function(res, beta_val, beta2, sigma_spat_use, 
-                                   model_info, model_fit_time) {
+get_summary_table_inla <- function(res, beta_val, beta2, model_info, model_fit_time) {
     
     start <- Sys.time()
     
@@ -136,7 +135,7 @@ get_summary_table_inla <- function(res, beta_val, beta2, sigma_spat_use,
     
     summary_time <- as.numeric(end - start, units = 'secs')
     
-    sum_tab$sigma_spat_est <- res$summary.hyperpar$mean['Stdev for i',]
+    sum_tab$sigma_spat_est <- res$summary.hyperpar['Stdev for i','mean']
     sum_tab$eigen_decomp_time <- 0
     sum_tab$model_fit_time <- model_fit_time 
     sum_tab$summary_time <- summary_time

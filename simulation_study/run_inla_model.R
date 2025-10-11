@@ -12,7 +12,6 @@ library(spatstat.random)
 library(mvnfast)
 library(Matrix)
 library(INLA)
-library(fmesher)
 
 source('helper_functions.R')
 source('sim_function.R')
@@ -42,11 +41,12 @@ all_sims <- all_sims[order(all_sims$n_subjects,
                            all_sims$sim_number),]
 rownames(all_sims) <- NULL
 
-tmp <- all_sims[seq(1, nrow(all_sims), 5),]
-rownames(tmp) <- NULL
 
 # do batches
-batch_size <- 200
+batch_size <- 5
+tmp <- all_sims[seq(1, nrow(all_sims), batch_size),]
+rownames(tmp) <- NULL
+
 batch_idx <- batch_size * (idx - 1) + 1:batch_size
 
 
@@ -99,43 +99,16 @@ for (i in nrow(all_sims)) {
     
     
     # fit model and extract estimates + 95% CIs
+    # 10, 1 = 41
+    # 10, 5 = 377 sec (6 min)
+    # 30, 1 = 149 sec (2 min)
+    # 30, 5 = 1084 sec (18 min)
+    # 50, 1 = 192.1932 (3 min)
+    # 50, 5 = 
     
-    all_results <- fit_inla(sim_data, n_image_sub,  beta_val, beta2)
-    
-    
-    
-    
-    
-    
-    # fit the model using exponential
-    start_model <- Sys.time()
-    
-    if (n_image_sub == 1) {
-        # no subject random effect
-        spfit <- fitme(cbind(outcome, numNeighbors-outcome) ~ response + fov_type +
-                           (1|imageID) +
-                           MaternIMRFa(1|x+y %in% imageID),
-                       data=sub_dat,
-                       family = binomial,
-                       fixed=list(nu=1),
-                       method = 'REML')
-    } else {
-        spfit <- fitme(cbind(outcome, numNeighbors-outcome) ~ response + fov_type +
-                           (1|subjectID) +
-                           (1|imageID) +
-                           Matern(1|x+y %in% imageID),
-                       data=sub_dat,
-                       family = binomial,
-                       fixed=list(nu=100),
-                       method = 'REML')
-    }
-
-    end_model <- Sys.time()
+    all_results <- fit_inla(sim_data, n_image_sub,  beta_val, beta2, model_info)
     
     
-    
-    
-    all_results <- do.call("rbind.data.frame", res_models)
     all_results$n_cells <- nrow(sim_data)
     rownames(all_results)  <- NULL
     
@@ -150,6 +123,6 @@ for (i in nrow(all_sims)) {
 }
 
 # save output in RDS form
-saveRDS(all_batches, paste0('./output/res_batch_', sprintf("%04d",idx), '.rds'))
+saveRDS(all_batches, paste0('./output/res_inla_batch_', sprintf("%03d",idx), '.rds'))
 
 
