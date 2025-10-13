@@ -6,6 +6,7 @@ outputFolder <- 'output'
 resultsFolder <- 'results'
 
 outputFiles <- sort(list.files(paste0('./', outputFolder)))
+outputFiles <- outputFiles[grep('res_batch', outputFiles)]
 
 # any missing?
 all_files <- paste0('res_batch_', sprintf("%04d",1:1620), '.rds')
@@ -57,20 +58,36 @@ for (i in 2:length(outputFiles3)) {
 
 saveRDS(res_all, paste0('./', resultsFolder, '/res_all_3.rds'))
 
+# inla batch
+outputFiles <- sort(list.files(paste0('./', outputFolder)))
+outputFiles <- outputFiles[grep('res_inla', outputFiles)]
+
+res_all <- readRDS(paste0('./', outputFolder, '/', outputFiles[1]))
+
+for (i in 2:length(outputFiles)) {
+    res_i <- readRDS(paste0('./', outputFolder, '/', outputFiles[i]))
+    res_all <-rbind.data.frame(res_all, res_i)
+}
+saveRDS(res_all, paste0('./', resultsFolder, '/res_all_inla.rds'))
+
 
 ################################################################################
-### combine all three and summarize
+### combine all and summarize
 
 resultsFolder <- 'results'
 
 res_all_1 <- readRDS(paste0('./', resultsFolder, '/res_all_1.rds'))
 res_all_2 <- readRDS(paste0('./', resultsFolder, '/res_all_2.rds'))
 res_all_3 <- readRDS(paste0('./', resultsFolder, '/res_all_3.rds'))
+res_all_inla <- readRDS(paste0('./', resultsFolder, '/res_all_inla.rds'))
+res_all_inla$zero_distance <- 100
 
-res_all <- rbind.data.frame(res_all_1, res_all_2, res_all_3)
+
+res_all <- rbind.data.frame(res_all_1, res_all_2, res_all_3, res_all_inla)
 
 # forgot to exponentiate true value
-res_all$truth[res_all$coef == 'OR_FOV'] <- exp(res_all$truth[res_all$coef == 'OR_FOV'])
+res_all$truth[which(res_all$coef == 'OR_FOV' & res_all$model_type != 'inla')] <-
+    exp(res_all$truth[which(res_all$coef == 'OR_FOV' & res_all$model_type != 'inla')])
 
 
 library(dplyr)
@@ -99,7 +116,8 @@ saveRDS(prop_stats, paste0('./', resultsFolder, '/prop_stats.rds'))
 
 time_tab <- subset(res_all, coef == 'OR_R' & 
                        model_type %in% c('no_corr', 
-                                         'pc_sqexp')) %>%
+                                         'pc_sqexp', 
+                                         'inla')) %>%
     group_by(model_type, n_subjects, n_image_sub) %>%
     summarise(avg_time = mean(time),
               median_time = median(time),

@@ -19,6 +19,7 @@ library(spatstat.random)
 library(mvnfast)
 library(Matrix)
 library(doSNOW)
+library(cowplot)
 
 source('sim_function.R')
 source('helper_functions.R')
@@ -232,11 +233,16 @@ prop_stats <- merge(prop_stats, beta_vals,
 
 or_stats <- subset(prop_stats, 
                    model_type %in% c('no_corr', 
-                                     'pc_sqexp'))
+                                     'pc_sqexp',
+                                     'inla'))
 
 
 or_stats$model_type <- factor(or_stats$model_type,
-                              labels = c('No spatial correlation',
+                              levels = c('inla', 
+                                         'no_corr',
+                                         'pc_sqexp'),
+                              labels = c('Full model',
+                                         'No spatial correlation',
                                          'Eigen-decomposition'))
 
 or_stats$sigma_spat_fac <- factor(or_stats$sigma_spat,
@@ -250,24 +256,25 @@ n_image_sub_plot <- 5
 zero_distance_plot <- 100
 
 
-# no corr vs estimation by sigma-spat, nsubject = 30, nimages = 1, zero_distance = 50
+# Bias 
 p1 <- ggplot(subset(or_stats, coef == 'OR_R' & 
                         n_subjects == n_subjects_plot & 
                         n_image_sub == n_image_sub_plot & 
                         zero_distance == zero_distance_plot), 
-             aes(x = exp(beta_val), y = bias,  col = model_type)) +
+             aes(x = exp(beta_val), y = bias_rel,  col = model_type)) +
     geom_point(size = 2) + 
     geom_line(linewidth = 1) +
     facet_nested( ~ sigma_spat_fac ) +
-    scale_color_manual(values = c('tomato', 'dodgerblue')) + 
+    scale_color_manual(values = c('goldenrod2', 'tomato', 'dodgerblue')) + 
     ggtitle('Bias') +
     labs(x = 'Odds ratio for responders vs non-responders',
-         y = 'Bias',
+         y = 'Relative Bias',
          col = 'Model') +
-    geom_hline(yintercept = 0, linetype = 2, linewidth = 1)
+    geom_hline(yintercept = 0, linetype = 2, linewidth = 1) + 
+    ylim(-0.4, 0.4)
 
 
-# no corr vs estimation by sigma-spat, nsubject = 30, nimages = 1, zero_distance = 50
+# coverage
 p2 <- ggplot(subset(or_stats, coef == 'OR_R' & 
                         n_subjects == n_subjects_plot & 
                         n_image_sub == n_image_sub_plot & 
@@ -276,16 +283,36 @@ p2 <- ggplot(subset(or_stats, coef == 'OR_R' &
     geom_point(size = 2) + 
     geom_line(linewidth = 1) +
     facet_nested( ~ sigma_spat_fac ) +
-    scale_color_manual(values = c('tomato', 'dodgerblue')) + 
+    scale_color_manual(values = c('goldenrod2', 'tomato', 'dodgerblue')) + 
     ggtitle('Coverage of 95% CIs') +
     labs(x = 'Odds ratio for responders vs non-responders',
          y = 'Coverage  probability',
          col = 'Model') +
     geom_hline(yintercept = 0.95, linetype = 2, linewidth = 1)
 
+# Extract the legend from one plot
+legend <- get_legend(
+    p1 + theme(legend.position = "right")
+)
+
+
+# Remove legends from the individual panels
+p1_noleg <- p1 + theme(legend.position = "none")
+p2_noleg <- p2 + theme(legend.position = "none")
+
+# Combine plots vertically, add shared legend to the right
+
+
 png('figures/bias_cover.png', units = 'in', res = 500, height =7, width = 12)
-grid.arrange(p1, p2, nrow = 2)
+plot_grid(
+    plot_grid(p1_noleg, p2_noleg, ncol = 1, align = "v"),
+    legend,
+    rel_widths = c(1, 0.3)
+)
 dev.off()
+
+
+
 
 ################################################################################
 # Figure 3 - power by dataset size
@@ -349,11 +376,11 @@ dev.off()
 time_tab <- readRDS('results/time_tab.rds')
 ncells_summary <- readRDS('results/ncells_summary.rds')
 
-time_tab$median_IQR <- paste0(sprintf("%.2f", round(time_tab$median_time, 2)), 
+time_tab$median_IQR <- paste0(sprintf("%.2f", round(time_tab$median_time/60, 2)), 
                               ' (',
-                              sprintf("%.2f", round(time_tab$lower_time, 2)),
+                              sprintf("%.2f", round(time_tab$lower_time/60, 2)),
                               ', ',
-                              sprintf("%.2f", round(time_tab$upper_time, 2)),
+                              sprintf("%.2f", round(time_tab$upper_time/60, 2)),
                               ')')
 
 
@@ -367,9 +394,10 @@ time_tab_wide <- pivot_wider(time_tab,
     data.frame()
 time_tab_wide$median_cells <- ncells_summary$median_cells
 time_tab_wide <- time_tab_wide[,c('n_subjects', 'n_image_sub', 'median_cells',
-                                  'no_corr', 'pc_sqexp')]
+                                  'inla','no_corr',  'pc_sqexp')]
 
-colnames(time_tab_wide)[4:5] <- c('No spatial correlation',
+colnames(time_tab_wide)[4:6] <- c('Full model',
+                                  'No spatial correlation',
                                   'Eigen-decomposition')
 
 time_tab_wide$median_cells <- scales::comma(time_tab_wide$median_cells)

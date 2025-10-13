@@ -29,10 +29,10 @@ all_sims <- expand.grid(n_subjects = c(10, 30, 50),
                         n_image_sub = c(1, 5),
                         sigma_spat = c(0.5, 1, 2),
                         beta_idx = 1:nrow(beta_vals),
-                        sim_number = 1:20,
+                        sim_number = 1:100,
                         stringsAsFactors = F)
 
-
+# 16200
 all_sims <- merge(all_sims, beta_vals, by = 'beta_idx', all.x = T)
 
 all_sims <- all_sims[order(all_sims$n_image_sub,
@@ -43,24 +43,25 @@ rownames(all_sims) <- NULL
 
 
 # do batches
-# batch 1-12 get 1:1620 (all nimages = 1)
-# batches 1621:2160 is 10/5 ~ 10 min
-# batches 2161:2700 is 30/5 ~ 20 min (need high memory)
-# batches 2701:3240 is 50/5 ~ 40 min (need high memory)
+# batch 1-60 get 1:8100 (all nimages = 1)
+# batches 8101:10800 is 10/5 ~ 10 min
+# batches 10801:13500 is 30/5 ~ 20 min (need high memory)
+# batches 13501:16200 is 50/5 ~ 40 min (need high memory)
 
-if (idx <= 12) {
+if (idx <= 60) {
     batch_size <- 135
     batch_idx <- batch_size * (idx - 1) + 1:batch_size
-} else if (idx <= 17){ # idx 13-17, 5 batches of 108
+} else if (idx <= 85){ # idx 61-85, 25 batches of 108
     batch_size <- 108
-    batch_idx <- (135 * 12) + 108 * (idx - 13) + 1:batch_size
-} else if (idx <= 27){ # idx 18-27, 10 batches of 54
+    batch_idx <- (135 * 60) + 108 * (idx - 60 - 1) + 1:batch_size
+} else if (idx <= 135){ # idx 86-135, 50 batches of 54
     batch_size <- 54
-    batch_idx <- (135 * 12) + (108 * 5) + 54 * (idx - 18) + 1:batch_size
-} else {               # idx 28-47, 20 batches of 27
+    batch_idx <- (135 * 60) + (108 * 25) + 54 * (idx - 85 - 1) + 1:batch_size
+} else {               # idx 136-235, 100 batches of 27
     batch_size <- 27
-    batch_idx <- (135 * 12) + (108 * 5) + (54 * 10) + 27 * (idx - 28) + 1:batch_size
+    batch_idx <- (135 * 60) + (108 * 25) + (54 * 50) + 27 * (idx - 135 - 1) + 1:batch_size
 }
+batch_idx
 
 for (i in batch_idx) {
     
@@ -135,6 +136,6 @@ for (i in batch_idx) {
 }
 
 # save output in RDS form
-saveRDS(all_batches, paste0('./output/res_inla_batch_', sprintf("%02d",idx), '.rds'))
+saveRDS(all_batches, paste0('./output/res_inla_batch_', sprintf("%03d",idx), '.rds'))
 
 
