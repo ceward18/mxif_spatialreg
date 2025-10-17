@@ -1,0 +1,223 @@
+nimble version 1.2.1 is loaded.
+For more information on NIMBLE and a User Manual,
+please visit https://R-nimble.org.
+
+Note for advanced users who have written their own MCMC samplers:
+  As of version 0.13.0, NIMBLE's protocol for handling posterior
+  predictive nodes has changed in a way that could affect user-defined
+  samplers in some situations. Please see Section 15.5.1 of the User Manual.
+
+Attaching package: ‘nimble’
+
+The following object is masked from ‘package:stats’:
+
+    simulate
+
+The following object is masked from ‘package:base’:
+
+    declare
+
+Loading required package: spatstat.data
+Loading required package: spatstat.univar
+spatstat.univar 3.0-1
+spatstat.geom 3.3-3
+
+Attaching package: ‘spatstat.geom’
+
+The following object is masked from ‘package:MASS’:
+
+    area
+
+spatstat.random 3.3-2
+This is INLA_25.06.07 built 2025-06-11 18:54:45 UTC.
+ - See www.r-inla.org/contact-us for how to get help.
+ - List available models/likelihoods/etc with inla.list.models()
+ - Use inla.doc(<NAME>) to access documentation
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=31053
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 3 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=21830
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 20 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=13303
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 26 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5824
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 11 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=14460
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 48 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5570
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 60 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=6068
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 64 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5683
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 111 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5594
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 141 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=13171
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 200 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5961
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 240 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5638
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 228 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5594
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 272 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5570
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 313 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5571
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 340 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5594
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 391 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5638
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 363 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5584
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 409 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=9682
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 7 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=9616
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 19 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1324
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 84 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1314
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 82 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1304
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 148 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1314
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 235 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1296
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 253 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1304
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 402 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1314
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 517 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1288
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 575 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1276
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 690 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1287
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 718 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1271
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 883 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1275
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 924 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1274
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 1036 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1270
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 1081 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1271
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 1163 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1278
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 1179 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1271
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 1241 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3738
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 9 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=6165
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 3 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=6006
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 22 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5713
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 36 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3738
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 53 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3867
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 83 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3726
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 99 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3608
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 144 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3531
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 253 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3550
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 246 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3551
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 350 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3552
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 421 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3531
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 352 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3540
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 556 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3599
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 446 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3531
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 596 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3536
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 680 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3531
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 619 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=3536
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 679 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=2198
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 4 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=2015
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 27 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=2198
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 42 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1990
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 66 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=2015
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 112 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1990
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 121 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1950
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 219 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=2094
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 201 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1948
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 248 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1961
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 366 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1963
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 466 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1939
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 542 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1948
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 474 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1969
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 603 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1964
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 763 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1936
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 730 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1939
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 789 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1942
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 832 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1936
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 998 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=8250
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 17 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=7683
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 21 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=4371
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 70 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=4429
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 81 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=4371
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 147 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=1027
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 280 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=697
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 293 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=56
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 382 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=128
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 484 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 642 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=10
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 609 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=128
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 827 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 974 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=57
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 925 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=42
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 1066 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=50
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 946 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=5
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 1353 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=46
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 1213 NAN/INF values in logl
+ *** WARNING *** GMRFLib_2order_approx: rescue NAN/INF values in logl for idx=28
+ *** WARNING *** GMRFLib_2order_approx: reset counter for 1322 NAN/INF values in logl
