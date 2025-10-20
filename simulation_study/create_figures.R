@@ -370,41 +370,145 @@ dev.off()
 # dev.off()
 
 ################################################################################
-# Table 1 - MSE by dataset size
-# time to compute
+# Figure 4, Compute time by dataset size
 
-time_tab <- readRDS('results/time_tab.rds')
-ncells_summary <- readRDS('results/ncells_summary.rds')
-
-time_tab$median_IQR <- paste0(sprintf("%.2f", round(time_tab$median_time/60, 2)), 
-                              ' (',
-                              sprintf("%.2f", round(time_tab$lower_time/60, 2)),
-                              ', ',
-                              sprintf("%.2f", round(time_tab$upper_time/60, 2)),
-                              ')')
+time_n_cells <- readRDS('results/time_n_cells.rds')
 
 
-time_tab <- time_tab[,c('n_subjects', 'n_image_sub',
-                        'model_type', 'median_IQR')]
+time_n_cells$model_type <- factor(time_n_cells$model_type,
+                              levels = c('inla',
+                                         'pc_sqexp', 
+                                         'no_corr'),
+                              labels = c('Full model (INLA)',
+                                         'Eigen-decomposition',
+                                         'No spatial correlation'))
 
-time_tab_wide <- pivot_wider(time_tab,
-                             id_cols = c(n_subjects, n_image_sub),
-                             names_from=model_type,
-                             values_from=median_IQR) %>%
-    data.frame()
-time_tab_wide$median_cells <- ncells_summary$median_cells
-time_tab_wide <- time_tab_wide[,c('n_subjects', 'n_image_sub', 'median_cells',
-                                  'inla','no_corr',  'pc_sqexp')]
-
-colnames(time_tab_wide)[4:6] <- c('Full model',
-                                  'No spatial correlation',
-                                  'Eigen-decomposition')
-
-time_tab_wide$median_cells <- scales::comma(time_tab_wide$median_cells)
-
-time_tab_wide
-
-kable(time_tab_wide) %>%
-    collapse_rows(columns = 1, valign = "middle")
+png('figures/n_cells_time.png', units = 'in', res = 500, height =3, width = 6)
+ggplot(time_n_cells, aes(x = median_cells, y = median_time/60, col = model_type)) + 
+    geom_line() + 
+    geom_point() + 
+    labs(y = 'Median compute time (min)', 
+         x = 'Number of index cells',
+         col = 'Model')+
+    scale_x_continuous(labels = scales::comma, breaks = seq(0, 300000, 50000))+
+    scale_color_manual(values = c('goldenrod2', 'dodgerblue', 'tomato')) +
+    theme(axis.text = element_text(size = 8),
+          axis.title = element_text(size = 10),
+          legend.text = element_text(size = 10),
+          legend.title = element_text(size = 10))
+dev.off()
 
 
+# 
+# time_tab <- readRDS('results/time_tab.rds')
+# ncells_summary <- readRDS('results/ncells_summary.rds')
+# time_tab$median_IQR <- paste0(sprintf("%.2f", round(time_tab$median_time/60, 2)), 
+#                               ' (',
+#                               sprintf("%.2f", round(time_tab$lower_time/60, 2)),
+#                               ', ',
+#                               sprintf("%.2f", round(time_tab$upper_time/60, 2)),
+#                               ')')
+# 
+# 
+# time_tab <- time_tab[,c('n_subjects', 'n_image_sub',
+#                         'model_type', 'median_IQR')]
+# 
+# time_tab_wide <- pivot_wider(time_tab,
+#                              id_cols = c(n_subjects, n_image_sub),
+#                              names_from=model_type,
+#                              values_from=median_IQR) %>%
+#     data.frame()
+# time_tab_wide$median_cells <- ncells_summary$median_cells
+# time_tab_wide <- time_tab_wide[,c('n_subjects', 'n_image_sub', 'median_cells',
+#                                   'inla','no_corr',  'pc_sqexp')]
+# 
+# colnames(time_tab_wide)[4:6] <- c('Full model',
+#                                   'No spatial correlation',
+#                                   'Eigen-decomposition')
+# 
+# time_tab_wide$median_cells <- scales::comma(time_tab_wide$median_cells)
+# 
+# time_tab_wide
+# 
+# kable(time_tab_wide) %>%
+#     collapse_rows(columns = 1, valign = "middle")
+
+################################################################################
+
+
+or_stats <- subset(prop_stats, 
+                   model_type %in% c('pc_exp', 
+                                     'pc_sqexp'))
+
+
+or_stats$model_type <- factor(or_stats$model_type,
+                              levels = c('pc_exp',
+                                         'pc_sqexp'),
+                              labels = c('Exponential',
+                                         'Squared exponential (truth)'))
+
+or_stats$sigma_spat_fac <- factor(or_stats$sigma_spat,
+                                  labels = c('Low spatial correlation',
+                                             'Medium spatial correlation',
+                                             'High spatial correlation'))
+
+
+n_subjects_plot <- 30
+n_image_sub_plot <- 5
+zero_distance_plot <- 100
+
+
+# Bias 
+p1 <- ggplot(subset(or_stats, coef == 'OR_R' & 
+                        n_subjects == n_subjects_plot & 
+                        n_image_sub == n_image_sub_plot & 
+                        zero_distance == zero_distance_plot), 
+             aes(x = exp(beta_val), y = bias_rel,  col = model_type)) +
+    geom_point(size = 2) + 
+    geom_line(linewidth = 1) +
+    facet_nested( ~ sigma_spat_fac ) +
+    scale_color_manual(values = c('tomato', 'dodgerblue')) + 
+    ggtitle('Bias') +
+    labs(x = 'Odds ratio for responders vs non-responders',
+         y = 'Relative Bias',
+         col = 'Model') +
+    geom_hline(yintercept = 0, linetype = 2, linewidth = 1) + 
+    ylim(-0.4, 0.4)
+
+
+# coverage
+p2 <- ggplot(subset(or_stats, coef == 'OR_R' & 
+                        n_subjects == n_subjects_plot & 
+                        n_image_sub == n_image_sub_plot & 
+                        zero_distance == zero_distance_plot), 
+             aes(x = exp(beta_val), y = cover,  col = model_type)) +
+    geom_point(size = 2) + 
+    geom_line(linewidth = 1) +
+    facet_nested( ~ sigma_spat_fac ) +
+    scale_color_manual(values = c('tomato', 'dodgerblue')) + 
+    ggtitle('Coverage of 95% CIs') +
+    labs(x = 'Odds ratio for responders vs non-responders',
+         y = 'Coverage  probability',
+         col = 'Model') +
+    geom_hline(yintercept = 0.95, linetype = 2, linewidth = 1)
+
+# Extract the legend from one plot
+legend <- get_legend(
+    p1 + theme(legend.position = "right")
+)
+
+
+# Remove legends from the individual panels
+p1_noleg <- p1 + theme(legend.position = "none")
+p2_noleg <- p2 + theme(legend.position = "none")
+
+# Combine plots vertically, add shared legend to the right
+
+
+png('figures/bias_cover_supp.png', units = 'in', res = 500, height =7, width = 12)
+plot_grid(
+    plot_grid(p1_noleg, p2_noleg, ncol = 1, align = "v"),
+    legend,
+    rel_widths = c(1, 0.3)
+)
+dev.off()

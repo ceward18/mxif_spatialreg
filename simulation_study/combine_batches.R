@@ -112,34 +112,57 @@ prop_stats <- res_all %>%
 
 saveRDS(prop_stats, paste0('./', resultsFolder, '/prop_stats.rds'))
 
+# time by n cells /  model_type
 
-
-time_tab <- subset(res_all, coef == 'OR_R' & 
-                       model_type %in% c('no_corr', 
-                                         'pc_sqexp', 
-                                         'inla')) %>%
-    group_by(model_type, n_subjects, n_image_sub) %>%
-    summarise(avg_time = mean(time),
-              median_time = median(time),
-              lower_time = quantile(time, 0.25),
-              upper_time = quantile(time, 0.75),
-              median_eigen_time = median(eigen_decomp_time),
-              median_model_time = median(model_fit_time),
-              median_summary_time = median(summary_time)) %>%
-    data.frame()
-
-saveRDS(time_tab, paste0('./', resultsFolder, '/time_tab.rds'))
-
-
-
-# median number of tumor cells by n_subjects and n_images
-ncells_summary <- subset(res_all, coef == 'OR_R' & 
-           model_type %in% c('no_corr')) %>%
-    group_by(n_subjects, n_image_sub) %>%
+res_all$total_n_images <- res_all$n_subjects * res_all$n_image_sub
+time_n_cells <- subset(res_all, coef == 'OR_R' & 
+                           model_type %in% c('no_corr', 
+                                             'pc_sqexp', 
+                                             'inla')) %>%
+    group_by(model_type, total_n_images) %>%
     summarise(mean_cells = mean(n_cells),
               median_cells = round(median(n_cells)),
               lower_cells = quantile(n_cells, 0.25),
-              upper_cells = quantile(n_cells, 0.75)) %>%
+              upper_cells = quantile(n_cells, 0.75),
+              avg_time = mean(time),
+              median_time = median(time),
+              lower_time = quantile(time, 0.25),
+              upper_time = quantile(time, 0.75)) %>%
     data.frame()
 
-saveRDS(ncells_summary, paste0('./', resultsFolder, '/ncells_summary.rds'))
+saveRDS(time_n_cells, paste0('./', resultsFolder, '/time_n_cells.rds'))
+
+
+# 
+# time_tab <- subset(res_all, coef == 'OR_R' & 
+#                        model_type %in% c('no_corr', 
+#                                          'pc_sqexp', 
+#                                          'inla')) %>%
+#     group_by(model_type, n_subjects, n_image_sub) %>%
+#     summarise(avg_time = mean(time),
+#               median_time = median(time),
+#               lower_time = quantile(time, 0.25),
+#               upper_time = quantile(time, 0.75),
+#               median_eigen_time = median(eigen_decomp_time),
+#               median_model_time = median(model_fit_time),
+#               median_summary_time = median(summary_time)) %>%
+#     data.frame()
+# 
+# saveRDS(time_tab, paste0('./', resultsFolder, '/time_tab.rds'))
+# 
+# 
+# 
+# # median number of tumor cells by n_subjects and n_images
+# ncells_summary <- subset(res_all, coef == 'OR_R' & 
+#            model_type %in% c('no_corr')) %>%
+#     group_by(n_subjects, n_image_sub) %>%
+#     summarise(mean_cells = mean(n_cells),
+#               median_cells = round(median(n_cells)),
+#               lower_cells = quantile(n_cells, 0.25),
+#               upper_cells = quantile(n_cells, 0.75)) %>%
+#     data.frame()
+# 
+# saveRDS(ncells_summary, paste0('./', resultsFolder, '/ncells_summary.rds'))
+# 
+# 
+

@@ -6,6 +6,9 @@
 *.docx
 *.png
 *.tmp
+*.sh
+*.out
+*.err
 
 # History files
 .Rhistory
