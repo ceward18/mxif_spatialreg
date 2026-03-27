@@ -219,6 +219,7 @@ n_image_sub_plot <- 5
 zero_distance_plot <- 100
 
 
+
 fig2_theme <- theme_bw() + 
     theme(strip.text = element_text(size = 16),
           strip.background = element_rect(fill = 'white'),
