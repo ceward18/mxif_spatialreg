@@ -9,7 +9,6 @@ draft_Proof_hi.pdf
 *.docx
 *.png
 *.tmp
-*.sh
 *.out
 *.error
 
