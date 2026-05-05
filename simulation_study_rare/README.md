@@ -1,5 +1,7 @@
 
-## simulation_study
+## simulation_study_rare
+
+This directory performs a subset of the simulations done in the ../simulation_study directory, but modifies the baseline co-localization probability to be 1%.
 
 /output/ - this directory contains batches of stored results from model fitting on the HPC system.
 
