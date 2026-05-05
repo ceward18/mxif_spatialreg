@@ -101,6 +101,7 @@ prop_stats <- res_all %>%
               mse_rel = mean((est/truth - truth/truth)^2),
               bias = mean((est - truth)),
               bias_rel = mean((est - truth)/truth),
+              log_bias = mean(log(est) - log(truth)), 
               abs_diff = mean(abs(est - truth)),
               abs_diff_rel = mean(abs(est/truth - truth/truth)),
               cover = mean(truth > lower & truth < upper, na.rm = T),

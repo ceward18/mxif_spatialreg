@@ -593,3 +593,93 @@ plot_grid(
     rel_widths = c(1, 0.3)
 )
 dev.off()
+
+
+
+
+################################################################################
+# Supplemental figure 3 Bias instead of relative bias.
+
+
+# prop outcome, beta1 corresponds to OR
+ors <- c(1, 1.25, 1.5, 2, 3)
+ors <- c(rev(1/ors[-1]), ors)
+
+beta_vals <- data.frame(beta_idx = 1:length(ors),
+                        beta_val = log(ors))
+
+
+# MSE, absolute difference, coverage probability, avg time
+prop_stats <- readRDS('results/prop_stats.rds')
+
+
+prop_stats$n_subjects <- factor(prop_stats$n_subjects)
+prop_stats <- merge(prop_stats, beta_vals,
+                    by = 'beta_idx', all.x = T)
+
+
+or_stats <- subset(prop_stats, 
+                   model_type %in% c('no_corr', 
+                                     'pc_sqexp',
+                                     'inla'))
+
+
+or_stats$model_type <- factor(or_stats$model_type,
+                              levels = c('inla',
+                                         'pc_sqexp', 
+                                         'no_corr'),
+                              labels = c('INLA-SPDE',
+                                         'Eigen-decomposition',
+                                         'No spatial correlation'))
+
+or_stats$sigma_spat_fac <- factor(or_stats$sigma_spat,
+                                  labels = c('Low spatial correlation',
+                                             'Medium spatial correlation',
+                                             'High spatial correlation'))
+
+
+n_subjects_plot <- 30
+n_image_sub_plot <- 5
+zero_distance_plot <- 100
+
+
+fig2_theme <- theme_bw() + 
+    theme(strip.text = element_text(size = 16),
+          strip.background = element_rect(fill = 'white'),
+          legend.title = element_text(size = 20),
+          legend.text = element_text(size = 17),
+          legend.key.width = unit(1, "cm"),   
+          panel.grid.minor = element_blank(), 
+          panel.grid.major = element_blank(), 
+          axis.title = element_text(size = 18), 
+          axis.text = element_text(size = 14), 
+          plot.title = element_text(size = 20, h = 0.5))
+
+
+# Bias 
+figs3 <- ggplot(subset(or_stats, coef == 'OR_R' & 
+                        n_subjects == n_subjects_plot & 
+                        n_image_sub == n_image_sub_plot & 
+                        zero_distance == zero_distance_plot), 
+             aes(x = exp(beta_val), y = bias,  col = model_type)) +
+    geom_hline(yintercept = 0, linetype = 2, linewidth = 1) + 
+    # geom_point(size = 3, alpha = 0.8) + 
+    geom_line(linewidth = 1.5, alpha = 0.8) +
+    facet_nested( ~ sigma_spat_fac ) +
+    scale_color_manual(values = c('goldenrod2', 'dodgerblue', 'tomato')) + 
+    ggtitle('Bias') +
+    labs(x = 'Odds ratio for subject-level predictor',
+         y = 'Bias',
+         col = 'Model') +
+    fig2_theme + 
+    scale_y_continuous(limits = c(-0.95, 0.95))
+
+    
+
+# Save the plot as an EPS file
+ggsave("figures/fig_s3_bias.png", plot = figs3, device = "png", 
+       width = 12, height = 4, units = "in")
+
+
+
+
