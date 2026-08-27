@@ -4,9 +4,13 @@
 /simulation_study_rare/*.sh
 /simulation_study_single/*
 /data_analysis/*
+/latex/*
+/old drafts/*
+/revisions/*
 
 draft_Proof_hi.pdf
 
+*.pdf
 *.docx
 *.tmp
 *.out

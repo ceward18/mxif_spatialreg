@@ -20,6 +20,7 @@ library(mvnfast)
 library(Matrix)
 library(doSNOW)
 library(cowplot)
+library(INLA)
 
 source('sim_function.R')
 source('helper_functions.R')
@@ -289,7 +290,7 @@ fig2 <- plot_grid(
 )
 
 # Save the plot as an EPS file
-ggsave("figures/fig2.eps", plot = fig2, device = "pdf", 
+ggsave("figures/fig2.eps", plot = fig2, device = cairo_ps, 
        width = 12, height = 8, units = "in")
 
 
@@ -492,10 +493,46 @@ ggplot(subset(sim_data1, imageID %in% c(7, 6, 9)),
 dev.off()
 
 
+################################################################################
+# Supplemental figure 2 - INLA mesh with example dataset
 
+rho_100 <- optim(0, function(x) (exp(-100^2 / (2 * x^2)) - 0.001)^2, 
+                 method = 'Brent',
+                 lower = 0, upper = 500)$par
+
+set.seed(1)
+sim_data1 <- sim_data_fn(betas = c( logit(0.10), 0, 0), 
+                         nSub = 10, 
+                         nImagePerSub = 1, 
+                         rho = rho_100,
+                         sigma_spat = 2,    # spatial SD
+                         sigma_sub = 0.4,            # between subjects SD
+                         sigma_image = 0.4)          # between images SD
+
+
+# create mesh based on domain
+mesh_image_domain <- inla.mesh.2d(
+    loc.domain = cbind(
+        x = c(0, 750, 750, 0),
+        y = c(0, 0, 750, 750)
+    ), 
+    max.edge = c(30, 100),
+    offset = c(30, 150),
+    cutoff = 6)
+plot(mesh_image_domain)
+mesh_image_domain$n
+
+
+png('figures/fig_s2_inla_mesh.png', units = 'in', 
+    res = 300, height = 3, width = 3)
+par(mar = c(0, 0, 0, 0))
+plot(mesh_image_domain, lwd = 0.5)
+points(cbind(sim_data1[,c('x', 'y')]), col = 'red', pch = 16, cex = 0.15)
+plot(mesh_image_domain, lwd = 0.5, add = T)
+dev.off()
 
 ################################################################################
-# Supplemental figure 2 - exponential versus squared exponential
+# Supplemental figure 3 - exponential versus squared exponential
 
 or_stats <- subset(prop_stats, 
                    model_type %in% c('pc_exp', 
@@ -586,7 +623,7 @@ p2_noleg <- p2 + theme(legend.position = "none")
 # Combine plots vertically, add shared legend to the right
 
 
-png('figures/fig_s2_bias_cover_cov.png', units = 'in', res = 500, height =7, width = 12)
+png('figures/fig_s3_bias_cover_cov.png', units = 'in', res = 500, height =7, width = 12)
 plot_grid(
     plot_grid(p1_noleg, p2_noleg, ncol = 1, align = "v"),
     legend,
@@ -598,7 +635,7 @@ dev.off()
 
 
 ################################################################################
-# Supplemental figure 3 Bias instead of relative bias.
+# Supplemental figure 4 Bias instead of relative bias.
 
 
 # prop outcome, beta1 corresponds to OR
@@ -677,7 +714,7 @@ figs3 <- ggplot(subset(or_stats, coef == 'OR_R' &
     
 
 # Save the plot as an EPS file
-ggsave("figures/fig_s3_bias.png", plot = figs3, device = "png", 
+ggsave("figures/fig_s4_bias.png", plot = figs3, device = "png", 
        width = 12, height = 4, units = "in")
 
 
